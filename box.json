@@ -1,0 +1,15 @@
+{
+  "directories": ["src/"],
+  "chmod":"0755",
+  "main":"bin/tragopan",
+  "finder":[
+    {
+      "name":"*.*",
+      "exclude":["Tests"],
+      "in":"vendor"
+    }
+  ],
+  "git-version": "package_version",
+  "output":"tragopan.phar",
+  "stub":true
+}

@@ -1,0 +1,46 @@
+#!/usr/bin/env php
+<?php
+use JMS\Serializer\SerializerBuilder;
+use KyoyaDe\Tragopan\PhpClient\CertificateAuthority\DownloadCommand;
+use KyoyaDe\Tragopan\PhpClient\Config;
+use KyoyaDe\Tragopan\PhpClient\ConfigAwareInterface;
+use KyoyaDe\Tragopan\PhpClient\ServerCertificate\FetchCommand;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\ConsoleEvents;
+use Symfony\Component\Console\Event\ConsoleCommandEvent;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+include __DIR__ . '/../vendor/autoload.php';
+
+$serializer = SerializerBuilder::create()->build();
+$app        = new Application('Tragopan CLI Client', '1.0.0');
+
+$dispatcher = new EventDispatcher();
+$dispatcher->addListener(
+    ConsoleEvents::COMMAND,
+    function (ConsoleCommandEvent $event) use ($serializer, $app) {
+        $command = $event->getCommand();
+        if ($command instanceof ConfigAwareInterface) {
+            $command->setConfig(Config::load($serializer, $event->getInput()->getOption('config-file')));
+        }
+    }
+);
+
+$app->setDispatcher($dispatcher);
+$app->getDefinition()->addOption(
+    new InputOption(
+        'config-file',
+        'c',
+        InputOption::VALUE_REQUIRED,
+        'Path and file name to the tragopan.json file.',
+        getcwd() . '/tragopan.json'
+    )
+);
+$app->addCommands(
+    [
+        new DownloadCommand(),
+        new FetchCommand(),
+    ]
+);
+$app->run();
