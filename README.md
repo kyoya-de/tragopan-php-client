@@ -31,6 +31,6 @@ It can be used to fetch a SSL certificate automatically, e.g. while provisioning
   }
 }
 ```
-3. Run the command `php tragopan.phar download:server`.
+3. Run the command `php tragopan.phar download:server -c /path/to/your-configuration.json` (`-c` always defaults to `./tragopan.json`).
 
-If you need the certificate of you own CA, just run `php tragopan.phar download:ca`.
+If you need the certificate of you own CA, just run `php tragopan.phar download:ca -c /path/to/your-configuration.json`.
